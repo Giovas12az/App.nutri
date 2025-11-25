@@ -1,7 +1,25 @@
 {% extends "base.html" %}
 
 {% block contenidos %}
+<h2>Analizador de Recetas</h2>
 
-<h1>Trabajando en ello</h1>
+<form method="POST">
+    <label>Ingresa la receta o lista de ingredientes:</label><br>
+    <textarea name="receta" rows="8" class="form-control"></textarea><br>
+    <button type="submit" class="btn btn-success">Analizar</button>
+</form>
+
+{% if resultado %}
+<h3>Resultados nutricionales totales:</h3>
+<table class="table table-bordered">
+    <tr><th>Nutriente</th><th>Cantidad</th></tr>
+    {% for nutriente, valor in resultado.items() %}
+        <tr>
+            <td>{{ nutriente }}</td>
+            <td>{{ valor }}</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endif %}
 
 {% endblock %}

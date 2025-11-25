@@ -1,9 +1,58 @@
-from flask import Flask,render_template,url_for , request, redirect, flash, session
+from flask import Flask, render_template, url_for, request, redirect, flash, session
+import requests
+
+
+API_KEY = "sLOQcyN5wjjcoLFfb9y7p7Drc5Yp6kotwn8yF9XR"
+
+TRADUCCIONES = {
+    "Energy": "Energía",
+    "Protein": "Proteína",
+    "Total lipid (fat)": "Grasa total",
+    "Carbohydrate, by difference": "Carbohidratos",
+    "Fiber, total dietary": "Fibra dietética",
+    "Sugars, total including NLEA": "Azúcares",
+    "Calcium, Ca": "Calcio",
+    "Iron, Fe": "Hierro",
+    "Sodium, Na": "Sodio",
+    "Vitamin C, total ascorbic acid": "Vitamina C",
+    "Vitamin D (D2 + D3)": "Vitamina D",
+    "Potassium, K": "Potasio",
+}
+
+
+def limpiar_ingredientes(texto):
+    lineas = texto.split("\n")
+    ingredientes = [l.strip() for l in lineas if len(l.strip()) > 2]
+    return ingredientes
+
+
+def buscar_nutrientes(nombre):
+   
+    url = "https://api.nal.usda.gov/fdc/v1/foods/search"
+    params = {"query": nombre, "api_key": API_KEY}
+
+    res = requests.get(url, params=params).json()
+
+    if "foods" not in res or len(res["foods"]) == 0:
+        return None
+
+    alimento = res["foods"][0]
+
+    nutrientes = {}
+
+    for n in alimento.get("foodNutrients", []):
+        nombre_nutr = n.get("nutrientName")
+        valor = n.get("value")
+
+        if nombre_nutr in TRADUCCIONES:
+            nutrientes[TRADUCCIONES[nombre_nutr]] = valor
+
+    return nutrientes
+
 
 
 app = Flask(__name__)
 app.secret_key = '2423415414'
-
 
 Usuarios_Registrados = {}
 
@@ -35,6 +84,7 @@ def registro():
 
     return render_template('registro.html')
 
+
 @app.route('/Validalogin', methods=['POST'])
 def Validalogin():
     email = request.form.get('email', '').strip()
@@ -59,11 +109,13 @@ def Validalogin():
 
     return redirect(url_for('iniciar_se'))
 
+
 @app.route('/logout')
 def logout():
     session.clear()
     flash(f'Has cerrado sesión correctamente', 'info')
     return redirect(url_for('iniciar_se'))
+
 
 @app.route('/')
 def base():
@@ -81,9 +133,33 @@ def RD():
 def Educacion():
     return render_template('Educacion.html')
 
-@app.route('/Analizador')
+
+@app.route('/Analizador', methods=['GET', 'POST'])
 def Analizador():
-    return render_template('Analizador.html')
+    resultado_total = {}
+
+    if request.method == 'POST':
+        receta = request.form.get("receta", "").strip()
+
+        if not receta:
+            flash("Ingresa una receta o lista de ingredientes.", "error")
+            return render_template('Analizador.html')
+
+        ingredientes = limpiar_ingredientes(receta)
+        suma = {}
+
+        for ing in ingredientes:
+            datos = buscar_nutrientes(ing)
+
+            if datos:
+                for k, v in datos.items():
+                    suma[k] = suma.get(k, 0) + v
+
+        resultado_total = suma
+
+    return render_template('Analizador.html', resultado=resultado_total)
+
+
 
 @app.route('/IMC', methods=['GET', 'POST'])
 def IMC():
@@ -112,6 +188,7 @@ def IMC():
             flash("Por favor ingresa valores válidos", "error")
 
     return render_template('IMC.html', resultado=resultado, categoria=categoria)
+
 
 @app.route('/TMB', methods=['GET', 'POST'])
 def TMB():
@@ -177,7 +254,6 @@ def PCI():
             altura = float(request.form.get('altura'))
             genero = request.form.get('genero')
 
-            
             if genero == "Hombre":
                 peso_ideal = 50 + 0.9 * (altura - 152)
             else:
@@ -202,7 +278,6 @@ def macronutrientes():
         try:
             calorias = float(request.form.get('calorias'))
 
-            
             carbohidratos = round((0.50 * calorias) / 4, 2)  
             proteinas = round((0.20 * calorias) / 4, 2)      
             grasas = round((0.30 * calorias) / 9, 2)         
@@ -215,10 +290,6 @@ def macronutrientes():
                             carbohidratos=carbohidratos,
                             proteinas=proteinas,
                             grasas=grasas)
-
-
-
-
 
 
 @app.route('/etiquetas')
@@ -242,10 +313,5 @@ def hidratacion():
     return render_template('hidratacion.html')
 
 
-
-
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-

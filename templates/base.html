@@ -27,7 +27,9 @@
           <div class="navbar-nav">
 
             <a class="nav-link active" href="/inicio">Inicio</a>
+            {% if not session.get("logueado") %}
             <a class="nav-link" href="/registro">Registro</a>
+            {% endif %}
             <a class="nav-link" href="/Educacion">Módulo de Educación</a>
             <a class="nav-link" href="/RD">Recursos Descargables</a>
 
