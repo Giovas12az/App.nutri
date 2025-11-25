@@ -26,8 +26,30 @@ def limpiar_ingredientes(texto):
     return ingredientes
 
 
-def buscar_nutrientes(nombre):
-   
+def extraer_cantidad_ingrediente(linea):
+    linea = linea.lower().strip()
+    partes = linea.split()
+
+    if partes[0].isdigit():
+        cantidad = int(partes[0])
+
+        if len(partes) > 1 and partes[1] in ["g", "gr", "gramos", "gramo"]:
+            ingrediente = " ".join(partes[2:])
+            return cantidad, ingrediente
+
+        if "g" in partes[0]:
+            cantidad = int(partes[0].replace("g", "").replace("gr", ""))
+            ingrediente = " ".join(partes[1:])
+            return cantidad, ingrediente
+
+        ingrediente = " ".join(partes[1:])
+        return cantidad, ingrediente
+
+    return 100, linea
+
+
+
+def buscar_nutrientes(nombre, gramos=100):
     url = "https://api.nal.usda.gov/fdc/v1/foods/search"
     params = {"query": nombre, "api_key": API_KEY}
 
@@ -37,15 +59,16 @@ def buscar_nutrientes(nombre):
         return None
 
     alimento = res["foods"][0]
-
     nutrientes = {}
+
+    factor = gramos / 100  
 
     for n in alimento.get("foodNutrients", []):
         nombre_nutr = n.get("nutrientName")
         valor = n.get("value")
 
         if nombre_nutr in TRADUCCIONES:
-            nutrientes[TRADUCCIONES[nombre_nutr]] = valor
+            nutrientes[TRADUCCIONES[nombre_nutr]] = round(valor * factor, 2)
 
     return nutrientes
 
@@ -134,6 +157,7 @@ def Educacion():
     return render_template('Educacion.html')
 
 
+
 @app.route('/Analizador', methods=['GET', 'POST'])
 def Analizador():
     resultado_total = {}
@@ -142,14 +166,20 @@ def Analizador():
         receta = request.form.get("receta", "").strip()
 
         if not receta:
-            flash("Ingresa una receta o lista de ingredientes.", "error")
+            flash("Ingresa una receta o lista de ingredientes.", "danger")
             return render_template('Analizador.html')
 
         ingredientes = limpiar_ingredientes(receta)
         suma = {}
 
         for ing in ingredientes:
-            datos = buscar_nutrientes(ing)
+
+            gramos, nombre_ing = extraer_cantidad_ingrediente(ing)
+
+            if nombre_ing == "":
+                nombre_ing = ing
+
+            datos = buscar_nutrientes(nombre_ing, gramos)
 
             if datos:
                 for k, v in datos.items():
@@ -209,7 +239,6 @@ def TMB():
                 tmb = (10 * peso) + (6.25 * altura) - (5 * edad) - 161
 
             resultado = round(tmb, 2)
-
             tdee = round(resultado * actividad, 2)
 
         except:
