@@ -31,7 +31,9 @@
             <a class="nav-link" href="/registro">Registro</a>
             {% endif %}
             <a class="nav-link" href="/Educacion">Módulo de Educación</a>
-            <a class="nav-link" href="/RD">Recursos Descargables</a>
+            {% if session.get("logueado") %}
+            <a class="nav-link" href="/RD">Ejercicios</a>
+            {% endif %}
 
 
             <div class="dropdown">

@@ -24,9 +24,9 @@ def limpiar_ingredientes(texto):
     lineas = texto.split("\n")
     ingredientes = [l.strip() for l in lineas if len(l.strip()) > 2]
     return ingredientes
+# Convierte los ingredientes en una lista de usuario
 
-
-def extraer_cantidad_ingrediente(linea):
+def extraer_ingrediente(linea):
     linea = linea.lower().strip()
     partes = linea.split()
 
@@ -41,6 +41,7 @@ def extraer_cantidad_ingrediente(linea):
             cantidad = int(partes[0].replace("g", "").replace("gr", ""))
             ingrediente = " ".join(partes[1:])
             return cantidad, ingrediente
+        #Esto detecta ingredientes escritos
 
         ingrediente = " ".join(partes[1:])
         return cantidad, ingrediente
@@ -77,7 +78,14 @@ def buscar_nutrientes(nombre, gramos=100):
 app = Flask(__name__)
 app.secret_key = '2423415414'
 
-Usuarios_Registrados = {}
+Usuarios_Registrados = {
+    "24308060610078@cetis61.edu.mx": {
+        "password": "12345678",
+        "nombre": "Gio"
+    }
+}
+
+print(Usuarios_Registrados["24308060610078@cetis61.edu.mx"]["password"])
 
 @app.route('/registro', methods=['GET', 'POST'])
 def registro():
@@ -174,7 +182,7 @@ def Analizador():
 
         for ing in ingredientes:
 
-            gramos, nombre_ing = extraer_cantidad_ingrediente(ing)
+            gramos, nombre_ing = extraer_ingrediente(ing)
 
             if nombre_ing == "":
                 nombre_ing = ing
