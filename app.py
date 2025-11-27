@@ -230,33 +230,6 @@ def IMC():
 
 @app.route('/TMB', methods=['GET', 'POST'])
 def TMB():
-    resultado = None
-    tdee = None
-
-    if request.method == 'POST':
-        try:
-            peso = float(request.form.get('peso'))
-            altura = float(request.form.get('altura'))
-            edad = int(request.form.get('edad'))
-            genero = request.form.get('genero')
-            actividad = float(request.form.get('actividad'))
-
-            if genero == "Hombre":
-                tmb = (10 * peso) + (6.25 * altura) - (5 * edad) + 5
-            else:
-                tmb = (10 * peso) + (6.25 * altura) - (5 * edad) - 161
-
-            resultado = round(tmb, 2)
-            tdee = round(resultado * actividad, 2)
-
-        except:
-            flash("Por favor ingresa valores válidos", "error")
-
-    return render_template('TMB.html', resultado=resultado, tdee=tdee)
-
-
-@app.route('/GCT', methods=['GET', 'POST'])
-def GCT():
     tmb = None
     gct = None
 
@@ -273,13 +246,15 @@ def GCT():
             else:
                 tmb = (10 * peso) + (6.25 * altura) - (5 * edad) - 161
 
-            gct = round(tmb * actividad, 2)
             tmb = round(tmb, 2)
+
+            
+            gct = round(tmb * actividad, 2)
 
         except:
             flash("Por favor ingresa valores válidos.", "error")
 
-    return render_template('GCT.html', tmb=tmb, gct=gct)
+    return render_template('TMB.html', tmb=tmb, gct=gct)
 
 
 @app.route('/PCI', methods=['GET', 'POST'])

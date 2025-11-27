@@ -28,18 +28,30 @@
         <p><strong>Clasificación:</strong> {{ categoria }}</p>
 
         {% if categoria == "Peso normal" %}
-            <p class="text-success">¡Felicidades! Tu peso está dentro del rango saludable.</p>
+        <p class="text-success">¡Felicidades! Tu peso está dentro del rango saludable.</p>
         {% elif categoria == "Bajo peso" %}
-            <p class="text-warning">Tienes bajo peso. Considera consultar a un profesional de salud.</p>
+        <p class="text-warning">Tienes bajo peso. Considera consultar a un profesional de salud.</p>
         {% elif categoria == "Sobrepeso" %}
-            <p class="text-warning">Estás en sobrepeso. Una alimentación equilibrada puede ayudarte.</p>
+        <p class="text-warning">Estás en sobrepeso. Una alimentación equilibrada puede ayudarte.</p>
         {% else %}
-            <p class="text-danger">Obesidad. Es recomendable recibir orientación médica o nutricional.</p>
+        <p class="text-danger">Obesidad. Es recomendable recibir orientación médica o nutricional.</p>
         {% endif %}
-        <p> </p>
+        <p>Interpretación del IMC:</p>
+        <ul>
+            <li style="font-size:25px">Menor de 18.5: Bajo peso</li>
+
+            <li style="font-size:25px">18.5 – 24.9: Peso normal</li>
+
+            <li style="font-size:25px">25 – 29.9: Sobrepeso</li>
+
+            <li style="font-size:25px">30 o más: Obesidad (varios grados)</li>
+
+        </ul>
+        <p>El IMC (Índice de Masa Corporal) es una medida que relaciona tu peso con tu estatura y sirve para evaluar si
+            una persona tiene un peso adecuado, bajo peso, sobrepeso o algún grado de obesidad. </p>
     </section>
     {% endif %}
-    
+
 
 </main>
 

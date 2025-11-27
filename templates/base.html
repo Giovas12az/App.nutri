@@ -30,7 +30,7 @@
             {% if not session.get("logueado") %}
             <a class="nav-link" href="/registro">Registro</a>
             {% endif %}
-            <a class="nav-link" href="/Educacion">Módulo de Educación</a>
+            <a class="nav-link" href="/Educacion">Educación e informacion</a>
             {% if session.get("logueado") %}
             <a class="nav-link" href="/RD">Ejercicios</a>
             {% endif %}
@@ -43,7 +43,6 @@
               <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="/IMC">Calculadora de indice de Masa Corporal</a></li>
                 <li><a class="dropdown-item" href="/TMB">Calculadora de Tasa Metabolica Basal</a></li>
-                <li><a class="dropdown-item" href="/GCT">Calculadora de gasto Calorico</a></li>
                 <li><a class="dropdown-item" href="/PCI">Calculadora de Peso Corporal Ideal </a></li>
                 {% if session.get("logueado") %}
                 <li><a class="dropdown-item" href="/macronutrientes">Macronutrientes</a></li>
@@ -91,7 +90,6 @@
       <h3>Reyes Pérez Giovanni Azael y Jocelin Margarita Juarez Ruelas</h3>
       <h3>3-D</h3>
       <h3>Estudiantes del CETis 61</h3>
-      <h3>16 años y 15 años</h3>
     </div>
     {% endblock %}
   </main>

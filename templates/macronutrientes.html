@@ -4,6 +4,13 @@
 <main class="container mt-4">
     <h1 class="text-center text-success">Calculadora de Macronutrientes</h1>
 
+    <p class="text-center text-secondary mt-2">
+        Los macronutrientes son los nutrientes que el cuerpo necesita en mayor cantidad: 
+        <strong>carbohidratos, proteínas y grasas</strong>.  
+        Esta calculadora te ayuda a distribuir tus calorías diarias (TDEE/GCT)
+        según una proporción estándar usada en nutrición.
+    </p>
+
     <form method="POST" class="col-md-6 mx-auto mt-4">
         <div class="mb-3">
             <label class="form-label">Calorías diarias (TDEE / GCT):</label>
@@ -14,14 +21,23 @@
     </form>
 
     {% if calorias %}
-    <section class="mt-4 p-3 bg-light col-md-6 mx-auto">
-        <h4 class="text-center">Resultados</h4>
+    <section class="mt-4 p-3 bg-light col-md-6 mx-auto border rounded">
+        <h4 class="text-center">Resultados de Macronutrientes</h4>
+
         <p><strong>Calorías totales:</strong> {{ calorias }} kcal/día</p>
-        <p><strong>Carbohidratos:</strong> {{ carbohidratos }} g/día</p>
-        <p><strong>Proteínas:</strong> {{ proteinas }} g/día</p>
-        <p><strong>Grasas:</strong> {{ grasas }} g/día</p>
-        <p class="text-secondary">
-            Basado en una distribución típica: 50% CHO, 20% proteína, 30% grasa.
+        <p><strong>Carbohidratos (50%):</strong> {{ carbohidratos }} g/día  
+            <br>Los carbohidratos son la principal fuente de energía del cuerpo.
+        </p>
+        <p><strong>Proteínas (20%):</strong> {{ proteinas }} g/día  
+            <br>Ayudan a la construcción y reparación de tejidos, músculos y hormonas.
+        </p>
+        <p><strong>Grasas (30%):</strong> {{ grasas }} g/día  
+            <br>Esenciales para hormonas, absorción de vitaminas y energía prolongada.
+        </p>
+
+        <p class="text-secondary mt-3">
+            Esta distribución de 50% carbohidratos, 20% proteínas y 30% grasas es una guía general.  
+            Puede ajustarse según objetivos: pérdida de peso, aumento muscular o mantenimiento.
         </p>
     </section>
     {% endif %}

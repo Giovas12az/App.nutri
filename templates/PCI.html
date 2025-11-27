@@ -12,17 +12,17 @@
         </div>
 
         <div class="mb-3">
-                    <label class="form-label d-block">Sexo:</label>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="genero" id="mujer" value="Mujer" required>
-                        <label class="form-check-label" for="mujer">Mujer</label>
-                    </div>
+            <label class="form-label d-block">Sexo:</label>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="genero" id="mujer" value="Mujer" required>
+                <label class="form-check-label" for="mujer">Mujer</label>
+            </div>
 
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="genero" id="hombre" value="Hombre" required>
-                        <label class="form-check-label" for="hombre">Hombre</label>
-                    </div>
-                </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="genero" id="hombre" value="Hombre" required>
+                <label class="form-check-label" for="hombre">Hombre</label>
+            </div>
+        </div>
 
         <button type="submit" class="btn btn-primary w-100">Calcular PCI</button>
 
@@ -32,11 +32,30 @@
     <section class="mt-4 p-3 border rounded bg-light col-md-6 mx-auto">
         <h4 class="text-center">Resultado</h4>
         <p><strong>Peso Corporal Ideal:</strong> {{ peso_ideal }} kg</p>
-        <p class="text-secondary">
-            Este cálculo es orientativo y puede variar según edad, complexión y otros factores.
-        </p>
+
+        <hr>
+
+        <h5>Interpretación del PCI</h5>
+        <ul>
+            <li style="font-size:23px">El PCI es una estimación del peso saludable basado en tu estatura.</li>
+            <li style="font-size:23px">No considera masa muscular, complexión, edad ni distribución de grasa.</li>
+            <li style="font-size:23px">Es una referencia general, no un diagnóstico médico.</li>
+        </ul>
+
+        <h5>Rangos orientativos de salud</h5>
+        <ul>
+            <li style="font-size:22px">Hombres: el PCI suele ser ligeramente más alto debido a mayor masa muscular.</li>
+            <li style="font-size:22px">Mujeres: el PCI suele ser ligeramente menor.</li>
+        </ul>
+
+        <h5>¿Para qué sirve el PCI?</h5>
+        <ul>
+            <li style="font-size:22px">Para estimar un objetivo saludable de peso.</li>
+            <li style="font-size:22px">Para complementar otras mediciones como IMC y TMB.</li>
+            <li style="font-size:22px">Para diseñar dietas o rutinas físicas más realistas.</li>
+        </ul>
+
     </section>
     {% endif %}
-
 </main>
 {% endblock %}
