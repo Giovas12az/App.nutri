@@ -304,6 +304,67 @@ def macronutrientes():
                             grasas=grasas)
 
 
+@app.route('/recetas', methods=['GET', 'POST'])
+def recetas():
+    recetas_banco = [
+        {
+            "nombre": "Ensalada fresca",
+            "tiempo": 10,
+            "dieta": "vegano",
+            "dificultad": "fácil",
+            "calorias": 180,
+            "ingredientes": ["lechuga", "jitomate", "pepino"],
+            "descripcion": "Mezcla todos los ingredientes y agrega limón o aceite de oliva."
+        },
+        {
+            "nombre": "Pollo a la plancha con verduras",
+            "tiempo": 20,
+            "dieta": "normal",
+            "dificultad": "fácil",
+            "calorias": 320,
+            "ingredientes": ["pollo", "zanahoria", "calabaza"],
+            "descripcion": "Cocina el pollo y saltea las verduras."
+        },
+        {
+            "nombre": "Avena para meal prep",
+            "tiempo": 5,
+            "dieta": "vegano",
+            "dificultad": "principiante",
+            "calorias": 250,
+            "ingredientes": ["avena", "leche", "frutas"],
+            "descripcion": "Mezcla avena con leche y refrigera para 3 días."
+        },
+        {
+            "nombre": "Pasta integral con tomate",
+            "tiempo": 15,
+            "dieta": "sin gluten",
+            "dificultad": "fácil",
+            "calorias": 400,
+            "ingredientes": ["pasta integral", "tomate", "ajo"],
+            "descripcion": "Cocina la pasta y mézclala con tomate salteado."
+        }
+    ]
+
+    recetas_filtradas = recetas_banco
+
+    if request.method == 'POST':
+        tiempo = request.form.get('tiempo')
+        dieta = request.form.get('dieta')
+        dificultad = request.form.get('dificultad')
+
+        if tiempo:
+            recetas_filtradas = [r for r in recetas_filtradas if r["tiempo"] <= int(tiempo)]
+
+        if dieta and dieta != "todas":
+            recetas_filtradas = [r for r in recetas_filtradas if r["dieta"] == dieta]
+
+        if dificultad and dificultad != "todas":
+            recetas_filtradas = [r for r in recetas_filtradas if r["dificultad"] == dificultad]
+
+    return render_template("recetas.html", recetas=recetas_filtradas)
+
+
+
 @app.route('/etiquetas')
 def etiquetas():
     return render_template('etiquetas.html')
@@ -323,6 +384,8 @@ def guia():
 @app.route('/hidratacion')
 def hidratacion():
     return render_template('hidratacion.html')
+
+
 
 
 if __name__ == '__main__':

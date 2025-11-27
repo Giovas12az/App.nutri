@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block contenidos %}
+
+<div class="container mt-4">
+
+    <h2 class="text-center mb-4">Recetario Saludable</h2>
+
+    <form method="POST" class="card p-3 mb-4">
+        <div class="row">
+            <div class="col-md-4">
+                <label>Tiempo máximo (minutos)</label>
+                <input type="number" class="form-control" name="tiempo" placeholder="Ej. 20">
+            </div>
+
+            <div class="col-md-4">
+                <label>Tipo de dieta</label>
+                <select class="form-select" name="dieta">
+                    <option value="todas">Todas</option>
+                    <option value="vegano">Vegano</option>
+                    <option value="sin gluten">Sin gluten</option>
+                    <option value="normal">Normal</option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label>Dificultad</label>
+                <select class="form-select" name="dificultad">
+                    <option value="todas">Todas</option>
+                    <option value="fácil">Fácil</option>
+                    <option value="principiante">Principiante</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <button class="btn btn-success">Filtrar</button>
+        </div>
+    </form>
+
+    <div class="row">
+        {% for r in recetas %}
+        <div class="col-md-6 mb-3">
+            <div class="card p-3 shadow-sm">
+                <h4>{{ r.nombre }}</h4>
+
+                <p><strong>Tiempo:</strong> {{ r.tiempo }} min</p>
+                <p><strong>Dieta:</strong> {{ r.dieta }}</p>
+                <p><strong>Dificultad:</strong> {{ r.dificultad }}</p>
+                <p><strong>Calorías:</strong> {{ r.calorias }}</p>
+
+                <p><strong>Ingredientes:</strong>
+                    {{ r.ingredientes | join(', ') }}
+                </p>
+
+                <p>{{ r.descripcion }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}
