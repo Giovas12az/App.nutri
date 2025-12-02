@@ -4,7 +4,14 @@ import requests
 
 API_KEY = "sLOQcyN5wjjcoLFfb9y7p7Drc5Yp6kotwn8yF9XR"
 
-SP_KEY = "92c370faef0c4a66bd73586caa15daeb"  
+SP_KEY = "77e84be7e9254bd0914f0a215ccbfe44"  
+
+MAPA_DIETAS = {
+    "vegano": "vegan",
+    "sin gluten": "gluten free",
+    "todas": "",
+}
+
 
 
 TRADUCCIONES = {
@@ -103,7 +110,7 @@ def buscar_recetas_api(query, number=6):
 
 
 # CONFIG FLASK
- 
+
 app = Flask(__name__)
 app.secret_key = '2423415414'
 
@@ -368,11 +375,11 @@ def recetas():
         calorias = request.form.get("calorias", "")
         tipo = request.form.get("tipo", "")
 
-    # 1 CONSULTA PRINCIPAL A SPOONACULAR
+        # 1 CONSULTA PRINCIPAL A SPOONACULAR
         url_busqueda = "https://api.spoonacular.com/recipes/complexSearch"
         params = {
             "apiKey": SP_KEY,
-            "query": ingrediente,
+            "includeIngredients": ingrediente,  # <- Cambio aquí
             "number": 10,
             "addRecipeInformation": True,
         }
@@ -381,7 +388,7 @@ def recetas():
         if tiempo_max:
             params["maxReadyTime"] = tiempo_max
         if dieta and dieta != "todas":
-            params["diet"] = dieta
+            params["diet"] = MAPA_DIETAS.get(dieta, "")
         if calorias:
             params["maxCalories"] = calorias
 
@@ -398,7 +405,7 @@ def recetas():
             descripcion = r.get("summary", "").replace("<b>", "").replace("</b>", "")
 
             # 3 Calorías
-            calorias = r.get("nutrition", {}).get("nutrients", [{}])[0].get("amount", "No disponible")
+            calorias_valor = r.get("nutrition", {}).get("nutrients", [{}])[0].get("amount", "No disponible")
 
             # 4 Dificultad (estimada por tiempo)
             if r.get("readyInMinutes", 0) <= 15:
@@ -428,12 +435,11 @@ def recetas():
                 "ingredientes": ingredientes,
                 "descripcion": descripcion,
                 "dificultad": dificultad_calc,
-                "calorias": calorias,
-                "pasos": pasos  # ← IMPORTANTE
+                "calorias": calorias_valor,
+                "pasos": pasos
             })
 
     return render_template("recetas.html", recetas=recetas)
-
 
 
 
