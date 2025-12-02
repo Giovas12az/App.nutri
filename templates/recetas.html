@@ -1,64 +1,104 @@
-{% extends 'base.html' %}
-
+{% extends "base.html" %}
 {% block contenidos %}
+<main class="container mt-4">
+    <h1 class="text-center text-success">Banco de Recetas Saludables</h1>
 
-<div class="container mt-4">
+    <!-- FORMULARIO DE FILTROS -->
+    <form method="POST" class="card p-4 shadow rounded-3 mt-4">
+        <h4 class="mb-3">Filtros</h4>
 
-    <h2 class="text-center mb-4">Recetario Saludable</h2>
-
-    <form method="POST" class="card p-3 mb-4">
         <div class="row">
-            <div class="col-md-4">
-                <label>Tiempo máximo (minutos)</label>
-                <input type="number" class="form-control" name="tiempo" placeholder="Ej. 20">
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Tiempo máximo (min):</label>
+                <input type="number" name="tiempo" class="form-control" placeholder="Ej. 15">
             </div>
 
-            <div class="col-md-4">
-                <label>Tipo de dieta</label>
-                <select class="form-select" name="dieta">
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Dificultad:</label>
+                <select name="dificultad" class="form-select">
+                    <option value="">Todas</option>
+                    <option value="facil">Fácil (principiantes)</option>
+                    <option value="media">Media</option>
+                    <option value="dificil">Difícil</option>
+                </select>
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Dieta:</label>
+                <select name="dieta" class="form-select">
                     <option value="todas">Todas</option>
                     <option value="vegano">Vegano</option>
                     <option value="sin gluten">Sin gluten</option>
-                    <option value="normal">Normal</option>
                 </select>
             </div>
 
-            <div class="col-md-4">
-                <label>Dificultad</label>
-                <select class="form-select" name="dificultad">
+            <div class="col-md-3 mb-3">
+                <label class="form-label">Ingrediente principal:</label>
+                <input type="text" name="ingrediente" class="form-control" placeholder="Ej. pollo, avena">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Máx. calorías por porción:</label>
+                <input type="number" name="calorias" class="form-control" placeholder="Ej. 400">
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Tipo de receta:</label>
+                <select name="tipo" class="form-select">
                     <option value="todas">Todas</option>
-                    <option value="fácil">Fácil</option>
-                    <option value="principiante">Principiante</option>
+                    <option value="principiantes">Para principiantes</option>
+                    <option value="mealprep">Meal Prep (cocina por lotes)</option>
                 </select>
             </div>
         </div>
 
-        <div class="text-center mt-3">
-            <button class="btn btn-success">Filtrar</button>
-        </div>
+        <button class="btn btn-success w-100 mt-3">Buscar Recetas</button>
     </form>
 
-    <div class="row">
-        {% for r in recetas %}
-        <div class="col-md-6 mb-3">
-            <div class="card p-3 shadow-sm">
-                <h4>{{ r.nombre }}</h4>
+    <!-- RESULTADOS -->
+    <section class="mt-5">
+        {% if recetas %}
+            <h3 class="mb-4">Resultados:</h3>
+            <div class="row g-4">
+                {% for r in recetas %}
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="{{ r.imagen }}" class="card-img-top" alt="Imagen receta">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ r.nombre }}</h5>
+                            <p><strong>Tiempo:</strong> {{ r.tiempo }} min</p>
+                            <p><strong>Dificultad:</strong> {{ r.dificultad }}</p>
+                            <p><strong>Calorías:</strong> {{ r.calorias }} kcal</p>
+                            <p class="small">{{ r.descripcion }}</p>
 
-                <p><strong>Tiempo:</strong> {{ r.tiempo }} min</p>
-                <p><strong>Dieta:</strong> {{ r.dieta }}</p>
-                <p><strong>Dificultad:</strong> {{ r.dificultad }}</p>
-                <p><strong>Calorías:</strong> {{ r.calorias }}</p>
+                            <details>
+                                <summary class="text-primary">Ver ingredientes</summary>
+                                <ul>
+                                    {% for ing in r.ingredientes %}
+                                        <li>{{ ing }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </details>
 
-                <p><strong>Ingredientes:</strong>
-                    {{ r.ingredientes | join(', ') }}
-                </p>
-
-                <p>{{ r.descripcion }}</p>
-            </div>
-        </div>
+<details class="mt-2">
+    <summary class="text-success">Ver pasos</summary>
+    <ol>
+        {% for p in r.pasos %}
+        <li>{{ p }}</li>
         {% endfor %}
-    </div>
-
-</div>
-
+    </ol>
+</details>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <h4 class="text-center text-muted mt-5">No hay recetas aún. Usa los filtros para comenzar.</h4>
+        {% endif %}
+    </section>
+</main>
 {% endblock %}
+

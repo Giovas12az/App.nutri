@@ -4,6 +4,9 @@ import requests
 
 API_KEY = "sLOQcyN5wjjcoLFfb9y7p7Drc5Yp6kotwn8yF9XR"
 
+SP_KEY = "92c370faef0c4a66bd73586caa15daeb"  
+
+
 TRADUCCIONES = {
     "Energy": "Energía",
     "Protein": "Proteína",
@@ -19,13 +22,16 @@ TRADUCCIONES = {
     "Potassium, K": "Potasio",
 }
 
+# FUNCIONES DEL ANALIZADOR
 
+#separa cada línea en un ingrediente válido.
 def limpiar_ingredientes(texto):
+    #divide el texto por saltos de línea
     lineas = texto.split("\n")
     ingredientes = [l.strip() for l in lineas if len(l.strip()) > 2]
     return ingredientes
-# Convierte los ingredientes en una lista de usuario
 
+# identifica cantidad y nombre de cada ingrediente.
 def extraer_ingrediente(linea):
     linea = linea.lower().strip()
     partes = linea.split()
@@ -41,15 +47,13 @@ def extraer_ingrediente(linea):
             cantidad = int(partes[0].replace("g", "").replace("gr", ""))
             ingrediente = " ".join(partes[1:])
             return cantidad, ingrediente
-        #Esto detecta ingredientes escritos
 
         ingrediente = " ".join(partes[1:])
         return cantidad, ingrediente
 
     return 100, linea
 
-
-
+# consulta la API de USDA y devuelve nutrientes traducidos.
 def buscar_nutrientes(nombre, gramos=100):
     url = "https://api.nal.usda.gov/fdc/v1/foods/search"
     params = {"query": nombre, "api_key": API_KEY}
@@ -75,6 +79,31 @@ def buscar_nutrientes(nombre, gramos=100):
 
 
 
+
+# NUEVA FUNCIÓN: RECETAS SPOONACULAR
+
+
+def buscar_recetas_api(query, number=6):
+    url = "https://api.spoonacular.com/recipes/complexSearch"
+
+    params = {
+        "apiKey": SP_KEY,
+        "query": query,
+        "number": number,
+        "addRecipeInformation": True
+    }
+
+    res = requests.get(url, params=params).json()
+
+    return res.get("results", [])
+#La cadena URL junto con los parámetros indica a la API qué información queremos. 
+# Las respuestas se reciben en JSON y se procesan en Python."
+
+
+
+
+# CONFIG FLASK
+ 
 app = Flask(__name__)
 app.secret_key = '2423415414'
 
@@ -85,7 +114,12 @@ Usuarios_Registrados = {
     }
 }
 
-print(Usuarios_Registrados["24308060610078@cetis61.edu.mx"]["password"])
+
+
+
+
+# LOGIN / REGISTRO
+
 
 @app.route('/registro', methods=['GET', 'POST'])
 def registro():
@@ -93,8 +127,8 @@ def registro():
         nombres = request.form.get('nombre')
         apellido = request.form.get('apellido')
         email = request.form.get('email')
-        contraseña = request.form.get('password')  
-        confirmarcontraseña = request.form.get('confirm')  
+        contraseña = request.form.get('password')
+        confirmarcontraseña = request.form.get('confirm')
         
         if contraseña != confirmarcontraseña:
             flash("Las contraseñas no coinciden.", "error")
@@ -104,7 +138,6 @@ def registro():
             flash("Este email ya está registrado.", "error")
             return redirect(url_for('registro'))
 
-        
         Usuarios_Registrados[email] = {
             'nombre': '' + nombres,
             'password': contraseña,
@@ -148,6 +181,10 @@ def logout():
     return redirect(url_for('iniciar_se'))
 
 
+
+# PAGINAS
+
+
 @app.route('/')
 def base():
     return render_template('base.html')
@@ -165,6 +202,8 @@ def Educacion():
     return render_template('Educacion.html')
 
 
+# ANALIZADOR DE RECETAS
+
 
 @app.route('/Analizador', methods=['GET', 'POST'])
 def Analizador():
@@ -181,7 +220,6 @@ def Analizador():
         suma = {}
 
         for ing in ingredientes:
-
             gramos, nombre_ing = extraer_ingrediente(ing)
 
             if nombre_ing == "":
@@ -199,6 +237,9 @@ def Analizador():
 
 
 
+
+# INDICE DE MASA CORPORAL
+
 @app.route('/IMC', methods=['GET', 'POST'])
 def IMC():
     resultado = None
@@ -207,7 +248,7 @@ def IMC():
     if request.method == 'POST':
         try:
             peso = float(request.form.get('peso'))
-            altura = float(request.form.get('altura')) / 100  
+            altura = float(request.form.get('altura')) / 100
             imc = peso / (altura ** 2)
             imc = round(imc, 2)
 
@@ -228,12 +269,15 @@ def IMC():
     return render_template('IMC.html', resultado=resultado, categoria=categoria)
 
 
+
+# TASA METABÓLICA BASAL
+
 @app.route('/TMB', methods=['GET', 'POST'])
 def TMB():
     tmb = None
     gct = None
 
-    if request.method == 'POST':
+    if request.method == 'POST' :
         try:
             peso = float(request.form.get('peso'))
             altura = float(request.form.get('altura'))
@@ -248,7 +292,6 @@ def TMB():
 
             tmb = round(tmb, 2)
 
-            
             gct = round(tmb * actividad, 2)
 
         except:
@@ -256,6 +299,8 @@ def TMB():
 
     return render_template('TMB.html', tmb=tmb, gct=gct)
 
+
+# PESO CORPORAL IDEAL
 
 @app.route('/PCI', methods=['GET', 'POST'])
 def PCI():
@@ -279,6 +324,9 @@ def PCI():
     return render_template('PCI.html', peso_ideal=peso_ideal)
 
 
+
+# MACRONUTRIENTES
+
 @app.route('/macronutrientes', methods=['GET', 'POST'])
 def macronutrientes():
     calorias = None
@@ -290,9 +338,9 @@ def macronutrientes():
         try:
             calorias = float(request.form.get('calorias'))
 
-            carbohidratos = round((0.50 * calorias) / 4, 2)  
-            proteinas = round((0.20 * calorias) / 4, 2)      
-            grasas = round((0.30 * calorias) / 9, 2)         
+            carbohidratos = round((0.50 * calorias) / 4, 2)
+            proteinas = round((0.20 * calorias) / 4, 2)
+            grasas = round((0.30 * calorias) / 9, 2)
 
         except:
             flash("Por favor ingresa un valor válido de calorías.", "error")
@@ -304,64 +352,89 @@ def macronutrientes():
                             grasas=grasas)
 
 
-@app.route('/recetas', methods=['GET', 'POST'])
+
+# RECETAS CON SPOONACULAR
+
+# RECETAS CON SPOONACULAR SIMPLIFICADAS (SIN CALORÍAS NI NUTRIENTES)
+@app.route("/recetas", methods=["GET", "POST"])
 def recetas():
-    recetas_banco = [
-        {
-            "nombre": "Ensalada fresca",
-            "tiempo": 10,
-            "dieta": "vegano",
-            "dificultad": "fácil",
-            "calorias": 180,
-            "ingredientes": ["lechuga", "jitomate", "pepino"],
-            "descripcion": "Mezcla todos los ingredientes y agrega limón o aceite de oliva."
-        },
-        {
-            "nombre": "Pollo a la plancha con verduras",
-            "tiempo": 20,
-            "dieta": "normal",
-            "dificultad": "fácil",
-            "calorias": 320,
-            "ingredientes": ["pollo", "zanahoria", "calabaza"],
-            "descripcion": "Cocina el pollo y saltea las verduras."
-        },
-        {
-            "nombre": "Avena para meal prep",
-            "tiempo": 5,
-            "dieta": "vegano",
-            "dificultad": "principiante",
-            "calorias": 250,
-            "ingredientes": ["avena", "leche", "frutas"],
-            "descripcion": "Mezcla avena con leche y refrigera para 3 días."
-        },
-        {
-            "nombre": "Pasta integral con tomate",
-            "tiempo": 15,
-            "dieta": "sin gluten",
-            "dificultad": "fácil",
-            "calorias": 400,
-            "ingredientes": ["pasta integral", "tomate", "ajo"],
-            "descripcion": "Cocina la pasta y mézclala con tomate salteado."
+    recetas = []
+
+    if request.method == "POST":
+        ingrediente = request.form.get("ingrediente", "")
+        tiempo_max = request.form.get("tiempo", "")
+        dificultad = request.form.get("dificultad", "")
+        dieta = request.form.get("dieta", "")
+        calorias = request.form.get("calorias", "")
+        tipo = request.form.get("tipo", "")
+
+    # 1 CONSULTA PRINCIPAL A SPOONACULAR
+        url_busqueda = "https://api.spoonacular.com/recipes/complexSearch"
+        params = {
+            "apiKey": SP_KEY,
+            "query": ingrediente,
+            "number": 10,
+            "addRecipeInformation": True,
         }
-    ]
 
-    recetas_filtradas = recetas_banco
-
-    if request.method == 'POST':
-        tiempo = request.form.get('tiempo')
-        dieta = request.form.get('dieta')
-        dificultad = request.form.get('dificultad')
-
-        if tiempo:
-            recetas_filtradas = [r for r in recetas_filtradas if r["tiempo"] <= int(tiempo)]
-
+        # Filtros opcionales
+        if tiempo_max:
+            params["maxReadyTime"] = tiempo_max
         if dieta and dieta != "todas":
-            recetas_filtradas = [r for r in recetas_filtradas if r["dieta"] == dieta]
+            params["diet"] = dieta
+        if calorias:
+            params["maxCalories"] = calorias
 
-        if dificultad and dificultad != "todas":
-            recetas_filtradas = [r for r in recetas_filtradas if r["dificultad"] == dificultad]
+        respuesta = requests.get(url_busqueda, params=params).json()
 
-    return render_template("recetas.html", recetas=recetas_filtradas)
+        # 2 PROCESAR CADA RECETA 
+        for r in respuesta.get("results", []):
+            receta_id = r["id"]
+
+            # 2 Obtener ingredientes
+            ingredientes = [i["original"] for i in r.get("extendedIngredients", [])]
+
+            # 2 Descripción / resumen
+            descripcion = r.get("summary", "").replace("<b>", "").replace("</b>", "")
+
+            # 3 Calorías
+            calorias = r.get("nutrition", {}).get("nutrients", [{}])[0].get("amount", "No disponible")
+
+            # 4 Dificultad (estimada por tiempo)
+            if r.get("readyInMinutes", 0) <= 15:
+                dificultad_calc = "Fácil"
+            elif r.get("readyInMinutes", 0) <= 30:
+                dificultad_calc = "Media"
+            else:
+                dificultad_calc = "Difícil"
+
+            # 3 OBTENER PASOS DETALLADOS 
+            detalle = requests.get(
+                f"https://api.spoonacular.com/recipes/{receta_id}/information?apiKey={SP_KEY}"
+            ).json()
+
+            pasos = []
+            instrucciones = detalle.get("analyzedInstructions", [])
+
+            if instrucciones:
+                for paso in instrucciones[0].get("steps", []):
+                    pasos.append(paso["step"])
+
+            # 4 AGREGAR RECETA COMPLETA 
+            recetas.append({
+                "nombre": r.get("title"),
+                "imagen": r.get("image"),
+                "tiempo": r.get("readyInMinutes"),
+                "ingredientes": ingredientes,
+                "descripcion": descripcion,
+                "dificultad": dificultad_calc,
+                "calorias": calorias,
+                "pasos": pasos  # ← IMPORTANTE
+            })
+
+    return render_template("recetas.html", recetas=recetas)
+
+
 
 
 
