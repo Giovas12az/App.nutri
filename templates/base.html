@@ -13,11 +13,11 @@
 
 <body class=" bg-success-subtle text-dark">
 
-  <header class="bg-dark-subtle text-black text-center py-4">
-    <h1>NutriApp — Tu salud, nuestra prioridad</h1>
+  <header class="bg-dark-subtle text-black  py-4">
+    <h1 class="text-center">NutriApp — Tu salud, nuestra prioridad</h1>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
-        <a class="navbar-brand" href="/">Menu</a>
+        <p>Menu</p>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
           aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -26,15 +26,16 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <div class="navbar-nav">
 
-            <a class="nav-link active" href="/inicio">Inicio</a>
+            <a class="nav-link active" href="/">Inicio</a>
             {% if not session.get("logueado") %}
             <a class="nav-link" href="/registro">Registro</a>
             {% endif %}
             <a class="nav-link" href="/Educacion">Educación e informacion</a>
             {% if session.get("logueado") %}
             <a class="nav-link" href="/RD">Ejercicios</a>
-            {% endif %}
+            
             <a class="nav-link active" href="/recetas">Recetas</a>
+            {% endif %}
 
 
             <div class="dropdown">
@@ -72,29 +73,11 @@
     </nav>
   </header>
 
-  <main class="container my-4">
+
     {% block contenidos %}
-    <h2 class="text-center mb-4 py-3">Bienvenidos a la app de Nutrición (NutriApp)</h2>
 
-    <div class="row text-center py-3">
-      <div class="col-md-4">
-        <img src="{{ url_for('static', filename='/descarga (3).webp') }}" class="img-thumbnail" alt="...">
-      </div>
-      <div class="col-md-4">
-        <img src="{{ url_for('static', filename='/descarga (4).webp') }}" class="img-thumbnail" alt="...">
-      </div>
-      <div class="col-md-4">
-        <img src="{{ url_for('static', filename='/OIP (4).webp') }}" class="img-thumbnail" alt="...">
-      </div>
-    </div>
-
-    <div class="text-center mt-4 py-3">
-      <h3>Reyes Pérez Giovanni Azael y Jocelin Margarita Juarez Ruelas</h3>
-      <h3>3-D</h3>
-      <h3>Estudiantes del CETis 61</h3>
-    </div>
     {% endblock %}
-  </main>
+  
 
   <footer class="bg-dark text-white text-center py-3 mt-4">
     <p class="mb-0"> 2025 NutriApp — Proyecto escolar CETis 61</p>

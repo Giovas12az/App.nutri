@@ -12,6 +12,12 @@ MAPA_DIETAS = {
     "todas": "",
 }
 
+Usuarios_Registrados = {
+    "24308060610078@cetis61.edu.mx": {
+        "password": "12345678",
+        "nombre": "Gio"
+    }
+}
 
 
 TRADUCCIONES = {
@@ -114,12 +120,6 @@ def buscar_recetas_api(query, number=6):
 app = Flask(__name__)
 app.secret_key = '2423415414'
 
-Usuarios_Registrados = {
-    "24308060610078@cetis61.edu.mx": {
-        "password": "12345678",
-        "nombre": "Gio"
-    }
-}
 
 
 
@@ -194,7 +194,7 @@ def logout():
 
 @app.route('/')
 def base():
-    return render_template('base.html')
+    return render_template('inicio.html')
 
 @app.route('/iniciar_se')
 def iniciar_se():
@@ -206,6 +206,7 @@ def RD():
 
 @app.route('/Educacion')
 def Educacion():
+    
     return render_template('Educacion.html')
 
 
@@ -448,9 +449,7 @@ def recetas():
 def etiquetas():
     return render_template('etiquetas.html')
 
-@app.route('/inicio')
-def inicio():
-    return render_template('inicio.html')
+
 
 @app.route('/mitos')
 def mitos():
